@@ -1,0 +1,65 @@
+* {
+    z-index: 1;
+}
+
+.typing-field {
+    position: relative;
+    margin-top: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0px;
+    width: 500px;
+    line-height: 1.5em;
+    max-height: calc(1.5em * 5.5);
+    overflow: hidden;
+    text-align: left;
+}
+
+/* This ruleset is for displaying the text the user typed
+   For debugging purposes only
+
+.typing-field > div {
+    display: inline;
+    font-size: 2rem;
+    color: gray;
+    font-family: "Roboto Mono";
+    outline: 0;
+}*/
+
+.typing-field > input {
+    position: absolute;
+    /* margin-top: 200px;  */
+    width: 500px;
+    height: calc(1.5em * 6);
+    opacity: 0;
+
+}
+
+.typing-field > span {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 10px;
+    pointer-events: none;
+}
+
+.typing-field > span > p {
+    font-size: 2rem;
+    font-family: "Roboto Mono";
+    outline: 0;
+    pointer-events: none;
+}
+
+
+.stats-field {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    text-align: center;
+}
+
+.stats-field > p {
+    font-family: "Roboto Mono";
+    font-size: 1.5rem;
+    color: gray;
+}

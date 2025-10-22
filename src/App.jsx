@@ -1,6 +1,5 @@
 import './App.css'
-import Word from './components/Word.jsx'
-import { useState } from 'react'
+import TypingTest from './components/TypingTest.jsx'
 
 export default function App() {
   /**
@@ -13,15 +12,8 @@ export default function App() {
 
   /**
    * for the input: 
-   * 
+   * make an array of 100 words queued to be rendered
    */
-
-  const [typed, setTyped] = useState([]);
-
-  function handleInput(event) {
-    setTyped(event.target.value);
-    console.log(typed);
-  }
 
   return (
     <>
@@ -31,14 +23,7 @@ export default function App() {
       </header>
 
       <main>
-        <input 
-          type="text"
-
-          onChange={handleInput}
-        />
-        <div>
-          {typed.toString()}
-        </div>
+        <TypingTest />
       </main>
     </>
   )

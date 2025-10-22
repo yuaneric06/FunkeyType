@@ -24,14 +24,3 @@ header > h1, p {
   font-family: "Roboto Mono";
   color: #FED8B1;
 }
-
-main {
-  margin-top: 100px;
-  text-align: center;
-}
-
-main > div {
-  font-size: 2rem;
-  color: gray;
-  font-family: "Roboto Mono";
-}
