@@ -8,11 +8,23 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0px;
-    width: 500px;
+    width: 1000px;
     line-height: 1.5em;
     max-height: calc(1.5em * 5.5);
     overflow: hidden;
     text-align: left;
+}
+
+.typing-field>#caret {
+    position: relative;
+    height: 2em;
+    width: 2.5px;
+    background: #e2b714;
+    animation: caretFlashSmooth 1s infinite;
+    position: absolute;
+    border-radius: var(--roundness);
+    transform-origin: top left;
+    border-radius: 3px;
 }
 
 /* This ruleset is for displaying the text the user typed
@@ -26,7 +38,7 @@
     outline: 0;
 }*/
 
-.typing-field > input {
+.typing-field>input {
     position: absolute;
     /* margin-top: 200px;  */
     width: 500px;
@@ -35,14 +47,14 @@
 
 }
 
-.typing-field > span {
+.typing-field>span {
     display: flex;
     flex-direction: row;
     margin: 10px 10px;
     pointer-events: none;
 }
 
-.typing-field > span > p {
+.typing-field>span>p {
     font-size: 2rem;
     font-family: "Roboto Mono";
     outline: 0;
@@ -58,8 +70,14 @@
     text-align: center;
 }
 
-.stats-field > p {
+.stats-field>p {
     font-family: "Roboto Mono";
     font-size: 1.5rem;
     color: gray;
+}
+
+@keyframes caretFlashSmooth {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
 }

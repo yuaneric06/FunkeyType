@@ -5,29 +5,62 @@ import './TypingTest.css'
 
 export default function TypingTest() {
     const [typed, setTyped] = useState("");
-    
+    const [line, setLine] = useState(0);
+
     // holds the words we already typed
     const prevWordList = useRef([]);
     // holds the words we need to type
-    const wordList = useRef(Array.from({ length: 100}, () => getRandomWord()));
-    // holds the current word we are attempting to type in wordList
+    const wordLists = useRef([]);
+    const wordList = useRef(Array.from({ length: 100 }, () => getRandomWord()));
+    const fieldRef = useRef(null);
+    const lineWidth = 1000;
+
+    
     let currentWord = useRef(getRandomWord());
-    const totalCorrectLetters = useRef(0);
-    const totalWrongLetters = useRef(0);
-    const totalMissedLetters = useRef(0);
-    const totalExtraLetters = useRef(0);
-
+    const stats = useRef({
+        correct: 0,
+        wrong: 0,
+        missed: 0,
+        extra: 0
+    })
+    console.log("linewidth: ", lineWidth);
+    
     const uniqueId = useRef(0);
-
+    
+    useEffect(() => {
+        for (let i = 0; i < 3; i++) {
+            const line = [];
+            let total = "";
+            console.log(getTextWidth(total));
+            while (getTextWidth(total) < lineWidth) {
+                console.log(getTextWidth(total));
+                const word = getRandomWord();
+                line.push(word);
+                total += word + " ";
+            }
+            line.pop();
+            wordLists.current.push(line);
+        }
+        console.log(wordLists.current);
+    }, [])
 
     function getKey() {
         return uniqueId.current++;
     }
 
+    function getTextWidth(text) {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        ctx.font = "32px roboto mono";
+        return ctx.measureText(text).width;
+    }
+
     function getPrevTextWidth() {
         if (prevWordList.current.length === 0) return 0;
-        const allPrevTyped = prevWordList.current.reduce((acc, val) => acc += val.text + " ");
-        const font = "32px roboto mono"
+        const allPrevTyped = prevWordList.current.reduce((acc, val) => acc += val.typedWord + " ", "");
+        console.log(prevWordList.current);
+        console.log("prev typed: ", allPrevTyped);
+        const font = "32px roboto mono";
 
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
@@ -53,23 +86,27 @@ export default function TypingTest() {
         });
         for (let i = 0; i < Math.min(typed.length, currentWord.current.length); i++) {
             if (typed[i] !== currentWord.current[i]) {
-                totalWrongLetters.current++;
+                stats.current.wrong++;
             }
             else if (typed[i] === currentWord.current[i]) {
-                totalCorrectLetters.current++;
+                stats.current.correct++;
             }
         }
         if (typed.length > currentWord.current.length) {
-            totalExtraLetters.current += typed.length - currentWord.current.length;
+            stats.current.extra += typed.length - currentWord.current.length;
         }
         else if (typed.length < currentWord.current.length) {
-            totalMissedLetters.current += currentWord.current.length - typed.length;
+            stats.current.missed += currentWord.current.length - typed.length;
         }
         currentWord.current = wordList.current.shift();
         wordList.current.push(getRandomWord());
 
-        while (getPrevTextWidth() >= 800) {
-            prevWordList.current.shift();
+        let allPrevTyped = prevWordList.current.reduce((acc, val) => acc += val.typedWord + " ", "");
+        if (getTextWidth(allPrevTyped) >= 1600) {
+            while (getTextWidth(allPrevTyped) >= 800) {
+                prevWordList.current.shift();
+                allPrevTyped = prevWordList.current.reduce((acc, val) => acc += val.typedWord + " ", "");
+            }
         }
     }
 
@@ -82,14 +119,30 @@ export default function TypingTest() {
         else {
             setTyped(event.target.value);
         }
-        
-        // console.log(typed);
+
+        allPrevTyped = prevWordList.current.reduce((acc, val) => acc += val.typedWord + " ", "");
+        const totalWidth = getTextWidth(allPrevTyped) + getTextWidth(typed);
+        if (totalWidth > lineWidth) {
+            setLine(prev => prev + 1);
+        }
     }
 
+    console.log("NEW RENDER");
+    console.log("getPrevTextWidth(): ", getPrevTextWidth());
+    console.log("getTextWidth(typed): ", getTextWidth(typed));
+    const caretStyle = {
+        top: `${6 +  line * 40}px`,   // 40px = line height
+        left: `${9 + ((getPrevTextWidth() + getTextWidth(typed)) % lineWidth)}px`
+    };
+
+    /**
+     * render each line individually, when we finish one line, move the next
+     */
 
     return (
         <>
-            <section className="typing-field">
+            <section ref={fieldRef} className="typing-field">
+                <div style={caretStyle} id="caret"></div>
                 <input
                     type="text"
                     onChange={handleInput}
@@ -99,16 +152,15 @@ export default function TypingTest() {
                 </div> */}
                 {prevWordElements}
                 {wordElements}
-                
-                
+
+
             </section>
             <div className="stats-field">
-                <p key={getKey()}>Incorrect letters: {totalWrongLetters.current}</p>
-                <p key={getKey()}>Correct letters: {totalCorrectLetters.current}</p>
-                <p key={getKey()}>Extra letters: {totalExtraLetters.current}</p>
-                <p key={getKey()}>Missing letters: {totalMissedLetters.current}</p>
+                <p key={getKey()}>Incorrect letters: {stats.current.wrong}</p>
+                <p key={getKey()}>Correct letters: {stats.current.correct}</p>
+                <p key={getKey()}>Extra letters: {stats.current.extra}</p>
+                <p key={getKey()}>Missing letters: {stats.current.missed}</p>
             </div>
         </>
     )
 }
-            

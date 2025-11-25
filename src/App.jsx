@@ -4,7 +4,6 @@ import TypingTest from './components/TypingTest.jsx'
 export default function App() {
   /**
    * TODO: 
-   * make an input where the words to type exist
    * make a keyboard where users can click to type, 
    *  each button lights up when their key is pressed
    * make a score keeper
