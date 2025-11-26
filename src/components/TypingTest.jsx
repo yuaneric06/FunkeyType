@@ -16,7 +16,7 @@ export default function TypingTest() {
     const lineWidth = 1000;
 
     
-    let currentWord = useRef(getRandomWord());
+    let currentWord = useRef("");
     const stats = useRef({
         correct: 0,
         wrong: 0,
@@ -41,6 +41,7 @@ export default function TypingTest() {
             line.pop();
             wordLists.current.push(line);
         }
+        currentWord.current = wordLists[line][0];
         console.log(wordLists.current);
     }, [])
 
@@ -68,7 +69,6 @@ export default function TypingTest() {
         const width = context.measureText(allPrevTyped).width;
         return width;
     }
-
 
     let prevWordElements = prevWordList.current.map((prevTyped, index) => {
         return <Word text={prevTyped.text} typedWord={prevTyped.typedWord} key={getKey()} />
