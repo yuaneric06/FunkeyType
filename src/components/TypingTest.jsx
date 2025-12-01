@@ -5,16 +5,14 @@ import './TypingTest.css'
 
 export default function TypingTest() {
     const [typed, setTyped] = useState("");
-    const [line, setLine] = useState(-1);
+    const [line, setLine] = useState(1);
 
     // holds the words we already typed
-    const prevWordList = useRef(Array(2).fill().map(() => []));
+    const prevWordList = useRef(Array(3).fill().map(() => []));
     // holds the words we need to type
-    const wordLists = useRef(Array(3));
+    const wordLists = useRef([]);
     const fieldRef = useRef(null);
     const lineWidth = 1000;
-
-    const allPrevTyped = prevWordList.current.flat().reduce((acc, val) => acc += val.typedWord + " ", "");
 
     const currentWordIdx = useRef(0);
     const currentWord = wordLists.current[0] ? wordLists.current[line][currentWordIdx.current] : "";
@@ -37,7 +35,7 @@ export default function TypingTest() {
                 total += word + " ";
             }
             lineWords.pop();
-            wordLists.current[i] = lineWords;
+            wordLists.current.push(lineWords);
         }
         setLine(0);
     }, [])
@@ -52,23 +50,6 @@ export default function TypingTest() {
         ctx.font = "32px roboto mono";
         return ctx.measureText(text).width;
     }
-
-    let prevWordElements = prevWordList.current.flat().map((prevTyped, index) => {
-        if (!prevTyped.text || !prevTyped.typedWord) {
-            return null;
-        }
-        return <Word text={prevTyped.text} typedWord={prevTyped.typedWord} key={getKey()} />
-    })
-
-    let wordElements = [<Word typedWord={typed} text={currentWord} key={getKey()} />];
-    if (wordLists.current[0]) {
-        for (let i = line; i < 3; i++) {
-            for (let j = (i === line ? currentWordIdx.current + 1 : 0); j < wordLists.current[i].length; j++) {
-                wordElements.push(<Word text={wordLists.current[i][j]} key={getKey()} />);
-            }
-        }
-    }
-
 
     function moveToNextWord() {
         prevWordList.current[line].push({
@@ -91,7 +72,6 @@ export default function TypingTest() {
         }
         currentWordIdx.current++;
         const lineLength = wordLists.current[line].length;
-        console.log(prevWordList.current);
         if (currentWordIdx.current >= lineLength) {
             if (line === 1) {
                 prevWordList.current.shift();
@@ -126,18 +106,54 @@ export default function TypingTest() {
         }
     }
 
-    const prevTypedOnLine = prevWordList.current[line].reduce((acc, val) => {
-        return acc + val;
-    }, "");
+    const prevTypedOnLine = prevWordList.current[line] ? prevWordList.current[line]
+        .map(val => {
+            let temp = val.typedWord;
+            for (let idx = temp.length; idx < val.text.length; idx++) {
+                temp += val.text[idx];
+            }
+            return temp;
+        })
+        .join("") : 0;
 
     const caretStyle = {
-        top: `${6 + line * 40}px`,   // 40px = line height
-        left: `${9 + ((getTextWidth(prevTypedOnLine) + getTextWidth(typed)) % lineWidth)}px`
+        top: `${6 + line * 44}px`,   // 40px = line height
+        left: `${9 + getTextWidth(prevTypedOnLine) + getTextWidth(typed) + 20 * currentWordIdx.current}px`
     };
 
     /**
      * render each line individually, when we finish one line, move the next
      */
+    const lines = [];
+    for (let lineIdx = 0; lineIdx < wordLists.current.length; lineIdx++) {
+        const temp = [];
+        let idx = 0;
+        for (idx; idx < prevWordList.current[lineIdx].length; idx++) {
+            const { typedWord, text } = prevWordList.current[lineIdx][idx];
+            temp.push(
+                <Word text={text} typedWord={typedWord} key={getKey()} />
+            );
+        }
+        if (lineIdx == line) { // render current word
+            temp.push(
+                <Word text={wordLists.current[lineIdx][idx]} typedWord={typed} />
+            );
+            idx++;
+        }
+        for (idx; idx < wordLists.current[lineIdx].length; idx++) {
+            const text = wordLists.current[lineIdx][idx];
+            temp.push(
+                <Word text={text} key={getKey()} />
+            );
+        }
+        lines.push(temp);
+    }
+
+    // console.log(lines);
+    // console.log(wordLists.current);
+    const lineElements = lines.map(val => {
+        return <div className="line" key={getKey()}>{val}</div>
+    })
 
     return (
         <>
@@ -150,8 +166,7 @@ export default function TypingTest() {
                 {/* <div>
                     {typed.toString()}
                 </div> */}
-                {prevWordElements}
-                {wordElements}
+                {lineElements}
 
 
             </section>
