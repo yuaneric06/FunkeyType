@@ -12,7 +12,8 @@ export default function TypingTest() {
     // holds the words we need to type
     const wordLists = useRef([]);
     const fieldRef = useRef(null);
-    const lineWidth = 1000;
+    const bodyWidth = document.body.clientWidth;
+    const lineWidth = bodyWidth * 0.7;
 
     const currentWordIdx = useRef(0);
     const currentWord = wordLists.current[0] ? wordLists.current[line][currentWordIdx.current] : "";
@@ -157,7 +158,7 @@ export default function TypingTest() {
 
     return (
         <>
-            <section ref={fieldRef} className="typing-field">
+            <section ref={fieldRef} className="typing-field" style={ { width: `${lineWidth}px` }}>
                 <div style={caretStyle} id="caret"></div>
                 <input
                     type="text"

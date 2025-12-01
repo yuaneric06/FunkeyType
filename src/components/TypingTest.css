@@ -9,7 +9,6 @@
     flex-direction: column;
     /* flex-wrap: wrap; */
     gap: 0px;
-    width: 1000px;
     line-height: 1.5em;
     max-height: calc(1.5em * 5.5);
     /* overflow: hidden; */
