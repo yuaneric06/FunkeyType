@@ -48,7 +48,7 @@ export default function TypingTest() {
     function getTextWidth(text) {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-        ctx.font = "32px roboto mono";
+        ctx.font = "32px 'Roboto Mono', monospace";
         return ctx.measureText(text).width;
     }
 
@@ -158,7 +158,7 @@ export default function TypingTest() {
 
     return (
         <>
-            <section ref={fieldRef} className="typing-field" style={ { width: `${lineWidth}px` }}>
+            <section ref={fieldRef} className="typing-field" style={{ width: `${lineWidth}px` }}>
                 <div style={caretStyle} id="caret"></div>
                 <input
                     type="text"
